@@ -22,7 +22,6 @@ public class LearnMulti {
         double userAnswer;
         int responseNumber;
         String response;
-        int countAnswers;
         int difficulty;
         int gameMode;
         boolean continueSession;
@@ -32,7 +31,6 @@ public class LearnMulti {
         randGen = new SecureRandom();
         questionNumbers = new int[2];
         response = "";
-        countAnswers = 1;
         continueSession = true;
 
         //get difficulty
@@ -55,6 +53,9 @@ public class LearnMulti {
             //prompt user
             System.out.printf("How much is %d %s %d? ", questionNumbers[0], getArithmeticSymbol(), questionNumbers[1]);
 
+            //increase problem count
+            increaseProblem();
+
             //get user answer
             userAnswer = scnr.nextDouble();
 
@@ -62,12 +63,6 @@ public class LearnMulti {
             if (isAnswerCorrect(userAnswer, questionNumbers)) {
                 //get positive response
                 response = getResponse(true, randGen);
-
-                //increase problem count
-                increaseProblem();
-
-                //generate new numbers
-                generateQuestion(questionNumbers, randGen);
 
                 //increment correct count
                 increaseCorrect();
@@ -84,7 +79,7 @@ public class LearnMulti {
             System.out.printf("%s\n\n", response);
 
             //check if 10 answers have been typed
-            if (countAnswers % 10 == 0) {
+            if (getProblemCount() % 10 == 0) {
                 //print correct/incorrect count
                 printAnswerStats();
 
@@ -118,24 +113,21 @@ public class LearnMulti {
 
                     //set arithmetic type
                     setArithmeticOption(gameMode);
-
-                    //generate new numbers
-                    generateQuestion(questionNumbers, randGen);
                 } else {
                     continueSession = false;
                 }
             }
 
-            //increment count of answers
-            countAnswers++;
+            //generate new numbers
+            generateQuestion(questionNumbers, randGen);
         }
     }
 
     private static void printArithmeticMenu() {
         System.out.println("Select an option below for what you'd like to study:");
         System.out.println("1: Addition");
-        System.out.println("2: Subtraction");
-        System.out.println("3: Multiplication");
+        System.out.println("2: Multiplication");
+        System.out.println("3: Subtraction");
         System.out.println("4: Division");
         System.out.println("5: Mixed mode");
         System.out.println();
@@ -150,10 +142,10 @@ public class LearnMulti {
                 correctAnswer = (double)numbers[0] + numbers[1];
                 break;
             case 2:
-                correctAnswer = (double)numbers[0] - numbers[1];
+                correctAnswer = (double)numbers[0] * numbers[1];
                 break;
             case 3:
-                correctAnswer = (double)numbers[0] * numbers[1];
+                correctAnswer = (double)numbers[0] - numbers[1];
                 break;
             case 4:
                 correctAnswer = (double)numbers[0] / numbers[1];
@@ -249,9 +241,9 @@ public class LearnMulti {
             case 1:
                 return "+";
             case 2:
-                return "-";
-            case 3:
                 return "*";
+            case 3:
+                return "-";
             case 4:
                 return "/";
         }
@@ -305,6 +297,10 @@ public class LearnMulti {
 
     public static void increaseProblem() {
         countProblems++;
+    }
+
+    public static int getProblemCount() {
+        return countProblems;
     }
 
     public static double getCorrectPercentage() {
